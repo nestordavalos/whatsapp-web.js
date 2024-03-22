@@ -2,60 +2,9 @@
 
 // Exposes the internal Store to the WhatsApp Web client
 exports.ExposeStore = (moduleRaidStr) => {
-    /**
-     * Different versions WhatsApp Web can have different paths to the objects
-     */
-    class ModuleFinderMain {
-        static getVersion() {
-            return '2.1000.0';
-        }
-
-        Store(window) {
-            const Store = Object.assign({}, window.mR.findModule(m => m.default && m.default.Chat)[0].default);
-            Store.Call = window.mR.findModule((module) => module.default && module.default.Call)[0].default.Call;
-            Store.GroupMetadata = window.mR.findModule('GroupMetadata')[0].default.GroupMetadata;
-            Store.MsgKey = window.mR.findModule((module) => module.default && module.default.fromString)[0].default;
-            Store.OpaqueData = window.mR.findModule(module => module.default && module.default.createFromData)[0].default;
-            Store.UploadUtils = window.mR.findModule((module) => (module.default && module.default.encryptAndUpload) ? module.default : null)[0].default;
-            Store.UserConstructor = window.mR.findModule((module) => (module.default && module.default.prototype && module.default.prototype.isServer && module.default.prototype.isUser) ? module.default : null)[0].default;
-            return Store;
-        }
-    }
-
-    class ModuleFinder_2_3000_0 extends ModuleFinderMain {
-        static getVersion() {
-            return '2.3000.0';
-        }
-
-        Store(window) {
-            const Store = Object.assign({}, window.mR.findModule((m) => (m.Call && m.Chat))[0]);
-            Store.Call = window.mR.findModule((m) => (m && m.Call))[0].Call;
-            Store.GroupMetadata = window.mR.findModule((m) => (m && m.GroupMetadata))[0].GroupMetadata;
-            Store.MsgKey = window.mR.findModule((m) => (m && m.fromString))[0];
-            Store.OpaqueData = window.mR.findModule((m) => (m && m.createFromData))[0];
-            Store.UploadUtils = window.mR.findModule((m) => (m && m.encryptAndUpload))[0];
-            Store.UserConstructor = window.mR.findModule((m) => (m && m.prototype && m.prototype.isServer && m.prototype.isUser))[0];
-            return Store;
-        }
-    }
-
-    /**
-     * Check that finder can handle the current window
-     */
-    function canHandle(finderClass, window) {
-        return window.compareWwebVersions(window.Debug.VERSION, '>', finderClass.getVersion());
-    }
-
     eval('var moduleRaid = ' + moduleRaidStr);
     // eslint-disable-next-line no-undef
     window.mR = moduleRaid();
-    
-    // Find the first finder that can handle the current version or use the last one
-    // Add the latest version to the start of the array
-    const finders = [ModuleFinder_2_3000_0, ModuleFinderMain];
-    const ModuleFinder = finders.find(f => canHandle(f, window)) || finders[0];
-    const finder = new ModuleFinder();
-
     window.Store = Object.assign({}, (!window.mR.findModule((m) => (m.Call && m.Chat)).length ? window.mR.findModule((m) => ( m.default && m.default.Chat))[0].default : window.mR.findModule((m) => (m.Call && m.Chat))[0]));
     window.Store.AppState = window.mR.findModule('Socket')[0].Socket;
     window.Store.Conn = window.mR.findModule('Conn')[0].Conn;
