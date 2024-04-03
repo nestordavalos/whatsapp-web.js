@@ -320,7 +320,8 @@ exports.LoadUtils = () => {
         const mData = await window.Store.OpaqueData.createFromData(file, file.type);
         const mediaPrep = window.Store.MediaPrep.prepRawMedia(mData, { asDocument: forceDocument });
         const mediaData = await mediaPrep.waitForPrep();
-        const mediaObject = window.Store.MediaObject.getOrCreateMediaObject(mediaData.filehash);
+        //const mediaObject = window.Store.MediaObject.getOrCreateMediaObject(mediaData.filehash);
+        const mediaObject = window.Store.MediaObject(mediaData.filehash);
 
         const mediaType = window.Store.MediaTypes.msgToMediaType({
             type: mediaData.type,
