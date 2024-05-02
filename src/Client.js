@@ -784,7 +784,7 @@ class Client extends EventEmitter {
         } else {
             this.pupPage.on('response', async (res) => {
                 if(res.ok() && res.url() === WhatsWebURL) {
-                    await webCache.persist(await res.text().catch(_=>_)).catch(_=>_);
+                    await webCache.persist(await res.text());
                 }
             });
         }
