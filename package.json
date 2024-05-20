@@ -32,9 +32,9 @@
     "@pedroslopez/moduleraid": "github:wwebjs/moduleRaid",
     "fluent-ffmpeg": "2.1.2",
     "mime": "^3.0.0",
-    "node-fetch": "^2.6.9",
-    "node-webpmux": "3.1.7",
-    "puppeteer": "^18.2.1"
+    "node-fetch": "^3.3.2",
+    "node-webpmux": "3.2.0",
+    "puppeteer": "^22.4.1"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.12",
@@ -46,7 +46,7 @@
     "jsdoc": "^3.6.4",
     "jsdoc-baseline": "^0.1.5",
     "mocha": "^10.3.0",
-    "sinon": "^13.0.1"
+    "sinon": "^17.0.1"
   },
   "engines": {
     "node": ">=18.0.0"
