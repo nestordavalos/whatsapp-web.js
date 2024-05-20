@@ -240,12 +240,9 @@ class Client extends EventEmitter {
                 this.emit(Events.READY);
                 this.authStrategy.afterAuthReady();
             });
-            let lastPercent = null;
+
             await this.pupPage.exposeFunction('onOfflineProgressUpdateEvent', async (percent) => {
-                if (lastPercent !== percent) {
-                    lastPercent = percent;
-                    this.emit(Events.LOADING_SCREEN, percent, 'WhatsApp'); // Message is hardcoded as "WhatsApp" for now
-                }
+                this.emit(Events.LOADING_SCREEN, percent, 'WhatsApp'); // Message is hardcoded as "WhatsApp" for now
             });
         }
         const logoutCatchInjected = await this.pupPage.evaluate(() => {
@@ -1212,9 +1209,8 @@ class Client extends EventEmitter {
         const profilePic = await this.pupPage.evaluate(async contactId => {
             try {
                 const chatWid = window.Store.WidFactory.createWid(contactId);
-                return window.WWebJS.compareWwebVersions(window.Debug.VERSION, '<', '2.3000.0')
-                    ? await window.Store.ProfilePic.profilePicFind(chatWid)
-                    : await window.Store.ProfilePic.requestProfilePicFromServer(chatWid);
+                //return await window.Store.ProfilePic.profilePicFind(chatWid);
+                return await window.Store.ProfilePic.requestProfilePicFromServer(chatWid);
             } catch (err) {
                 if(err.name === 'ServerStatusCodeError') return undefined;
                 throw err;
