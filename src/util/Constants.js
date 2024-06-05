@@ -7,10 +7,17 @@ exports.DefaultOptions = {
         headless: true,
         defaultViewport: null
     },
-    webVersion: '2.2346.52',
+    // webVersion: '2.2346.52',
+    // webVersionCache: {
+    //     type: 'local',
+    // },
+    webVersion: "2.2412.54",
     webVersionCache: {
-        type: 'local',
-    },
+          type: "remote",
+          remotePath:
+            "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
+        },
+
     authTimeoutMs: 0,
     qrMaxRetries: 0,
     takeoverOnConflict: false,
