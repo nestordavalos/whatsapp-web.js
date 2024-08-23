@@ -166,7 +166,7 @@ class GroupChat extends Chat {
                             comment,
                             await window.WWebJS.getProfilePicThumbToBase64(groupWid)
                         );
-                        isInviteV4Sent = window.WWebJS.compareWwebVersions(window.Debug.VERSION, '<', '2.2335.6')
+                        isInviteV4Sent = window.compareWwebVersions(window.Debug.VERSION, '<', '2.2335.6')
                             ? res === 'OK'
                             : res.messageSendResult === 'OK';
                     }
@@ -282,6 +282,27 @@ class GroupChat extends Chat {
     }
     
     /**
+     * Updates the group setting to allow only admins to add members to the group.
+     * @param {boolean} [adminsOnly=true] Enable or disable this option 
+     * @returns {Promise<boolean>} Returns true if the setting was properly updated. This can return false if the user does not have the necessary permissions.
+     */
+    async setAddMembersAdminsOnly(adminsOnly=true) {
+        const success = await this.client.pupPage.evaluate(async (groupId, adminsOnly) => {
+            const chatWid = window.Store.WidFactory.createWid(groupId);
+            try {
+                const response = await window.Store.GroupUtils.setGroupMemberAddMode(chatWid, 'member_add_mode', adminsOnly ? 0 : 1);
+                return response.name === 'SetMemberAddModeResponseSuccess';
+            } catch (err) {
+                if(err.name === 'SmaxParsingFailure') return false;
+                throw err;
+            }
+        }, this.id._serialized, adminsOnly);
+
+        success && (this.groupMetadata.memberAddMode = adminsOnly ? 'admin_add' : 'all_member_add');
+        return success;
+    }
+    
+    /**
      * Updates the group settings to only allow admins to send messages.
      * @param {boolean} [adminsOnly=true] Enable or disable this option 
      * @returns {Promise<boolean>} Returns true if the setting was properly updated. This can return false if the user does not have the necessary permissions.
@@ -360,7 +381,7 @@ class GroupChat extends Chat {
         const codeRes = await this.client.pupPage.evaluate(async chatId => {
             const chatWid = window.Store.WidFactory.createWid(chatId);
             try {
-                return window.WWebJS.compareWwebVersions(window.Debug.VERSION, '>=', '2.3000.0')
+                return window.compareWwebVersions(window.Debug.VERSION, '>=', '2.3000.0')
                     ? await window.Store.GroupInvite.queryGroupInviteCode(chatWid, true)
                     : await window.Store.GroupInvite.queryGroupInviteCode(chatWid);
             }

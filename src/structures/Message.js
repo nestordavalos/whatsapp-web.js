@@ -295,12 +295,7 @@ class Message extends Base {
             this.allowMultipleAnswers = Boolean(!data.pollSelectableOptionsCount);
             this.pollInvalidated = data.pollInvalidated;
             this.isSentCagPollCreation = data.isSentCagPollCreation;
-
-            delete this._data.pollName;
-            delete this._data.pollOptions;
-            delete this._data.pollSelectableOptionsCount;
-            delete this._data.pollInvalidated;
-            delete this._data.isSentCagPollCreation;
+            this.messageSecret = Object.keys(data.messageSecret).map((key) =>  data.messageSecret[key]);
         }
 
         return super._patch(data);
@@ -510,7 +505,7 @@ class Message extends Base {
             
             const canRevoke = window.Store.MsgActionChecks.canSenderRevokeMsg(msg) || window.Store.MsgActionChecks.canAdminRevokeMsg(msg);
             if (everyone && canRevoke) {
-                if (window.WWebJS.compareWwebVersions(window.Debug.VERSION, '>=', '2.3000.0')) {
+                if (window.compareWwebVersions(window.Debug.VERSION, '>=', '2.3000.0')) {
                     return window.Store.Cmd.sendRevokeMsgs(chat, { list: [msg], type: 'message' }, { clearMedia: true });
                 } else {
                     return window.Store.Cmd.sendRevokeMsgs(chat, [msg], { clearMedia: true, type: msg.id.fromMe ? 'Sender' : 'Admin' });
