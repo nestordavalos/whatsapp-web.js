@@ -1015,9 +1015,10 @@ exports.LoadUtils = () => {
     };
     
     window.WWebJS.getStatusModel = status => {
-        let res = status.serialize();
+        // let res = status.serialize();
+        const res = status.serialize();
         delete res._msgs;
-        res.msgs = status._msgs.map(msg => window.WWebJS.getMessageModel(msg));
+        // res.msgs = status._msgs.map(msg => window.WWebJS.getMessageModel(msg));
         return res;
     };
 
