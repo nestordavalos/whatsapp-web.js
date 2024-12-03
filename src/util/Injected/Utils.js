@@ -451,11 +451,12 @@ exports.LoadUtils = () => {
     window.WWebJS.getChatModel = async chat => {
 
         let res = chat.serialize();
-        res.isGroup = chat.isGroup;
+        res.isGroup = false;
         res.formattedTitle = chat.formattedTitle;
-        res.isMuted = chat.mute && chat.mute.isMuted;
+        res.isMuted = chat.muteExpiration == 0 ? false : true;
 
         if (chat.groupMetadata) {
+            res.isGroup = true;
             const chatWid = window.Store.WidFactory.createWid((chat.id._serialized));
             await window.Store.GroupMetadata.update(chatWid);
             res.groupMetadata = chat.groupMetadata.serialize();
@@ -1015,10 +1016,9 @@ exports.LoadUtils = () => {
     };
     
     window.WWebJS.getStatusModel = status => {
-        // let res = status.serialize();
-        const res = status.serialize();
+        let res = status.serialize();
         delete res._msgs;
-        // res.msgs = status._msgs.map(msg => window.WWebJS.getMessageModel(msg));
+        res.msgs = status._msgs.map(msg => window.WWebJS.getMessageModel(msg));
         return res;
     };
 

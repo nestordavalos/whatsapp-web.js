@@ -538,8 +538,7 @@ declare namespace WAWebJS {
         public dataPath?: string;
         constructor(options?: {
             clientId?: string,
-            dataPath?: string,
-            rmMaxRetries?: number
+            dataPath?: string
         })
     }
     
@@ -553,8 +552,7 @@ declare namespace WAWebJS {
             store: Store,
             clientId?: string,
             dataPath?: string,
-            backupSyncIntervalMs: number,
-            rmMaxRetries?: number
+            backupSyncIntervalMs: number
         })
     }
 
