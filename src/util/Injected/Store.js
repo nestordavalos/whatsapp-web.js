@@ -55,7 +55,6 @@ exports.ExposeStore = () => {
     window.Store.MediaTypes = window.require('WAWebMmsMediaTypes');
     window.Store.MediaUpload = window.require('WAWebMediaMmsV4Upload');
     window.Store.MsgKey = window.require('WAWebMsgKey');
-    window.Store.NumberInfo = window.require('WAPhoneUtils');
     window.Store.OpaqueData = window.require('WAWebMediaOpaqueData');
     window.Store.QueryProduct = window.require('WAWebBizProductCatalogBridge');
     window.Store.QueryOrder = window.require('WAWebBizOrderBridge');
@@ -102,6 +101,11 @@ exports.ExposeStore = () => {
     if (window.compareWwebVersions(window.Debug.VERSION, '>=', '2.3000.1014111620')) 
         window.Store.AddonReactionTable = window.require('WAWebAddonReactionTableMode').reactionTableMode;
     
+    window.Store.NumberInfo = {
+        ...window.require('WAPhoneUtils'),
+        ...window.require('WAPhoneFindCC')
+    };
+    
     window.Store.ForwardUtils = {
         ...window.require('WAWebForwardMessagesToChat')
     };
@@ -122,7 +126,8 @@ exports.ExposeStore = () => {
     };
     window.Store.GroupInvite = {
         ...window.require('WAWebGroupInviteJob'),
-        ...window.require('WAWebGroupQueryJob')
+        ...window.require('WAWebGroupQueryJob'),
+        ...window.require('WAWebMexFetchGroupInviteCodeJob')
     };
     window.Store.GroupInviteV4 = {
         ...window.require('WAWebGroupInviteV4Job'),
@@ -165,37 +170,4 @@ exports.ExposeStore = () => {
 
     window.injectToFunction({ module: 'WAWebE2EProtoUtils', function: 'typeAttributeFromProtobuf' }, (func, ...args) => { const [proto] = args; return proto.locationMessage || proto.groupInviteMessage ? 'text' : func(...args); });
 
-    window.injectToFunction(
-        {
-            module: 'WAWebE2EProtoParser',
-            function: 'parseMsgProto',
-        },
-        (func, ...args) => {
-            const [msg] = args;
-
-            const viewOnceMsg =
-                msg.viewOnceMessage?.message ||
-                msg.viewOnceMessageV2?.message ||
-                msg.viewOnceMessageV2Extension?.message;
-
-            if (viewOnceMsg) {
-                args[0] = viewOnceMsg;
-
-                for (const type of [
-                    'imageMessage',
-                    'audioMessage',
-                    'videoMessage',
-                ]) {
-                    if (args[0][type]) {
-                        delete args[0][type].viewOnce;
-                        break;
-                    }
-                }
-            }
-
-            const result = func(...args);
-            viewOnceMsg && (result.isViewOnce = true);
-            return result;
-        }
-    );
 };
