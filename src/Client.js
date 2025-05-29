@@ -821,8 +821,12 @@ class Client extends EventEmitter {
      */
     async sendSeen(chatId) {
         const result = await this.pupPage.evaluate(async (chatId) => {
-            return window.WWebJS.sendSeen(chatId);
-
+            if (typeof window.WWebJS?.sendSeen === 'function') {
+                return await window.WWebJS.sendSeen(chatId);
+            } else {
+                console.warn('[sendSeen] WWebJS.sendSeen no está disponible aún.');
+                return false;
+            }
         }, chatId);
         return result;
     }
